@@ -82,7 +82,7 @@ typedef union packed {
 
 // Intruction opcodes
 typedef enum logic [6:0] {
-    //---- RV32I and RV32E
+    // Minimal set of opcodes (RV32I and RV32E)
     OP_LUI       = 7'b0110111,
     OP_AUIPC     = 7'b0010111,
     OP_JAL       = 7'b1101111,
@@ -95,16 +95,18 @@ typedef enum logic [6:0] {
     OP_FENCE     = 7'b0001111,
     OP_SYSTEM    = 7'b1110011,
 
-    //---- RV64I
+    //---RV64I_on
     OP_ALU_I_W   = 7'b0011011,
     OP_ALU_W     = 7'b0111011,
+    //---RV64I_off
 
-    //----------------------------------- Base IIS
+    //----------------------------------- Base Integer Instructions Set
 
-    //---- A
+    //---A_on
     OP_ATOMICS   = 7'b0101111,
+    //---A_off
 
-    //---- F
+    //---F_on
     OP_LOAD_FP   = 7'b0000111,
     OP_STORE_FP  = 7'b0100111,
     OP_FP        = 7'b1010011,
@@ -112,39 +114,81 @@ typedef enum logic [6:0] {
     OP_FMSUB     = 7'b1000111,
     OP_FNMSUB    = 7'b1001011,
     OP_FNMADD    = 7'b1001111
+    //---F_off
 
 } opcode_et;
 
+typedef enum logic [2:0] {
+    F3_0 = 3'b000,
+    F3_1 = 3'b001,
+    F3_2 = 3'b010,
+    F3_3 = 3'b011,
+    F3_4 = 3'b100,
+    F3_5 = 3'b101,
+    F3_6 = 3'b110,
+    F3_7 = 3'b111
+} f3_et;
+
+// TODO: complete this
+typedef enum logic [6:0] {
+    F7_0 = 7'b0000000,
+    F7_1 = 7'b0000001,
+    F7_2 = 7'b0000010,
+    F7_3 = 7'b0000011,
+    F7_4 = 7'b0000100,
+    F7_5 = 7'b0000101,
+    F7_6 = 7'b0000110,
+    F7_7 = 7'b0000111,
+    F7_8 = 7'b0001000,
+    F7_9 = 7'b0001001,
+    F7_10 = 7'b0001010,
+    F7_32 = 7'b0100000,
+} f7_et;
+
 typedef enum logic [7:0] {
-    //---- RV32I and RV32E
+    // Minimal set of instructions (RV32I and RV32E)
     LUI, AUIPC, JAL, JALR, BEQ, BNE, BLT, BGE, BLTU, BGEU, LB, LH, LW, LBU, LHU, SB, SH, SW,
     ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI, ADD, SUB, SLL, SLT, SLTU, XOR, SRL,
     SRA, OR, AND, FENCE, ECALL, EBREAK,
-    //---- RV64I
+
+    //---RV64I_on
     LWU, LD, SD, SLLI, SRLI, SRAI, ADDIW, SLLIW, SRLIW, SRAIW, ADDW, SUBW, SLLW, SRLW, SRAW,
-    //---- Zifencei
+    //---RV64I_off
+
+    //---Zifencei_on
     FENCE_I,
-    //---- Zicsr
+    //---Zifencei_off
+
+    //---Zicsr_on
     CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI,
-    //---- RV32M
+    //---Zicsr_off
+
+    //---RV32M_on
     MUL, MULH, MULHSU, MULHU, DIV, DIVU, REM, REMU,
-    //---- RV64M
+    //---RV32M_off
+
+    //---RV64M_on
     MULW, DIVW, DIVUW, REMW, REMUW
+    //---RV64M_off
 } instr_type_et;
 
 
 typedef enum logic [2:0] {
     INTEGER_QUEUE,
-    MEMORY_QUEUE
+    MEMORY_QUEUE,
+    FLOAT_QUEUE,
+    GLOBAL_QUEUE,
     // Add here new queues
 } queue_et;
 
 typedef enum logic [3:0]{
-    UNIT_ALU,                   // Select ALU
-    UNIT_DIV,                   // Select DIVISION
-    UNIT_MUL,                   // Select MULTIPLICATION
-    UNIT_BRANCH,                // Select Branch computation
-    UNIT_MEM                    // Select Memory unit
+    UNIT_ALU,                   // ALU
+    UNIT_DIV,                   // DIVISION
+    UNIT_MUL,                   // MULTIPLICATION
+    UNIT_BRANCH,                // Branch computation
+    UNIT_MEM,                   // Memory unit
+    UNIT_FPU                    // Floating-point Unit
+    // Add here new FUs
 } functional_unit_et;   // Selection of funtional unit in exe stage
 
 typedef enum logic [2:0]{
